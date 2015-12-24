@@ -10,13 +10,14 @@ import sys
 # the probablitity of error is 1/2^(error*2)
 # with the error set at 40 it is roughly as likely to be wrong as there is to be a mchine failure causing a wrong answer
 # this can be set higher or lower for the sake of speed
-def Miller_Rabin_prime(num, error = 40): 
+def Miller_Rabin_prime(num, error = 40):
+    rng = random.SystemRandom()
     d = num-1
     s = 0
     while d%2==0:
         d = d/2
         s+=1
-    for a in random.sample(xrange(2,2147000000),error):
+    for a in rng.sample(xrange(2,2147000000),error):
         if pow(a,d,num)!=1:
             count = 0
             for r in xrange(0,s):
@@ -44,9 +45,10 @@ def getStringValue(num):
 
 # This selects a random prime in some range
 def getRandomPrime(start,end):
-    i = random.randrange(start,end,2) #better random nunber generator 
+    rng = random.SystemRandom()
+    i = rng.randrange(start,end,2)
     while not Miller_Rabin_prime(i):
-        i = random.randrange(start,end,2)
+        i = rng.randrange(start,end,2)
     return i
 
 # this function computes The GCD of two numbers and can be used to get the multiplicative modulo inverse
