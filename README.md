@@ -9,16 +9,16 @@ The usage is as follows
 
 To generate your keys
 
-python RSA.py getKeys [number of Bits]
+* python RSA.py getKeys [number of Bits]
 
 To Encrypt a message
 
-python RSA.py encrypt <message> <file location of their public key>
+* python RSA.py encrypt <message> <file location of their public key>
 
 To Decrypt a message
 
-python RSA.py decrypt  <encrypted Message location> <file location of your private key>
+* python RSA.py decrypt  <encrypted Message location> <file location of your private key>
 
 To print this message
 
-python RSA>py -h
+* python RSA>py -h
