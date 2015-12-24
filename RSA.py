@@ -6,9 +6,9 @@ import sys
 
 
 # this checks if a number is prime
-# for the sake of speed it is done probabiliticly
-# the probablitity of error is 1/2^(error*2)
-# with the error set at 40 it is roughly as likely to be wrong as there is to be a mchine failure causing a wrong answer
+# for the sake of speed it is done probabilistically
+# the probability of error is 1/2^(error*2)
+# with the error set at 40 it is roughly as likely to be wrong as there is to be a machine failure causing a wrong answer
 # this can be set higher or lower for the sake of speed
 def Miller_Rabin_prime(num, error = 40):
     rng = random.SystemRandom()
@@ -30,14 +30,14 @@ def Miller_Rabin_prime(num, error = 40):
     return True
 
 # this turns any string into a integer
-# this is done by converting each letter/charecter into its ascii value (0-256)
-# streching this to three digits
-# and concatonating it to a integer
+# this is done by converting each letter / character into its ascii value (0-256)
+# stretching this to three digits
+# and concatenating it to a integer
 def getValueString(string):
     return int("".join([str(ord(item)).zfill(3) for item in list(string)]))
 
 # this reverses the above function
-# it adds 0s as nessesary becouse leading 0s are lost
+# it adds 0s as necessary because leading 0s are lost
 def getStringValue(num):
     num = str(num)
     num = "0"*((3-(len(num)%3))%3)+num
