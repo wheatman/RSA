@@ -70,7 +70,7 @@ def extendedGCD(a,b):
 def getKeys( bits = 1024):
     minprime,maxprime = 2**bits+1,2**(bits+1)-1
     p = getRandomPrime(minprime,maxprime)
-    q = getRandomPrime(minprime,maxprime) # make break in between 
+    q = getRandomPrime(minprime,maxprime)
     n = p*q
     e = getRandomPrime(10001,99999)
     while e == p or e ==q:
@@ -86,12 +86,12 @@ def writeKeysToFile(privateKey, publicKey):
         f.write(str(publicKey[0])+"\n"+str(publicKey[1])
     
 )
-# to encode a message
-def encode(message,recieverPublicKey):
+# to encrypt a message
+def encrypt(message,recieverPublicKey):
     encodedMessage = pow(getValueString(message),recieverPublicKey[1],recieverPublicKey[0])
     return encodedMessage
 
-# to decode a message
+# to decrypt a message
 def decrypt(encodedMessage, yourPrivateKey):
     message = pow(int(encodedMessage),yourPrivateKey[1],yourPrivateKey[0])
     return getStringValue(message)
@@ -132,7 +132,7 @@ if __name__ == '__main__':
                     e = int(f.readline())
                     recieverPublicKey = (n,e)
                     with open("encryptedMessage.txt","w") as f:
-                        f.write(str(encode(args[2],recieverPublicKey)))
+                        f.write(str(encrypt(args[2],recieverPublicKey)))
             except IOError as e:
                 usage()
     elif args[1] == "decrypt":
