@@ -79,53 +79,63 @@ def getKeys( bits = 1024):
     return (n,d),(n,e)
 
 # to write the keys to files
-def writeKeysToFile(privateKey, publicKey):
-    with open("privateKey.txt","w") as f:
+def writeKeysToFile(privateKey, publicKey, fileLocation):
+    with open(fileLocation+"/privateKey.txt","w") as f:
         f.write(str(privateKey[0])+"\n"+str(privateKey[1]))
-    with open("publicKey.txt","w") as f:
+    with open(fileLocation+"/publicKey.txt","w") as f:
         f.write(str(publicKey[0])+"\n"+str(publicKey[1])
     
 )
 # to encrypt a message
-def encrypt(message,recieverPublicKey):
-    encodedMessage = pow(getValueString(message),recieverPublicKey[1],recieverPublicKey[0])
+def encrypt(message,recieverPublicKey, yourPrivateKey = None):
+    if yourPrivateKey == None:
+        encodedMessage = pow(getValueString(message),recieverPublicKey[1],recieverPublicKey[0])
+    else:
+        encodedMessage = pow(getValueString(message),recieverPublicKey[1],recieverPublicKey[0])
+        encodedMessage = pow(encodedMessage,yourPrivateKey[1],yourPrivateKey[0])
     return encodedMessage
 
 # to decrypt a message
-def decrypt(encodedMessage, yourPrivateKey):
-    message = pow(int(encodedMessage),yourPrivateKey[1],yourPrivateKey[0])
+def decrypt(encodedMessage, yourPrivateKey, senderPublicKey=None):
+    if senderPublicKey ==None:
+        message = pow(int(encodedMessage),yourPrivateKey[1],yourPrivateKey[0])
+    else:
+        message = pow(int(encodedMessage),yourPrivateKey[1],yourPrivateKey[0])
+        message = pow(message,senderPublicKey[1],senderPublicKey[0])
+        print message
     return getStringValue(message)
 
 
 def usage():
     print """usage
 To generate your keys
-python RSA.py getKeys [number of Bits]
+python RSA.py getKeys <file Location> [number of Bits]
 To Encrypt a message
-python RSA.py encrypt message <file location of their public key>
+python RSA.py encrypt message <file location of their public key> [-v <file location of your private key>]
 To Decrypt a message
-python RSA.py decrypt  <encrypted Message location> <file location of your private key>
+python RSA.py decrypt  <encrypted Message location> <file location of your private key> [-v <file location of their public key>]
 To print this message
 python RSA>py -h
+Note:
+The -v modifier encrypts the message with your public key so that it can be decrypted with their public key, this proves the message is from you
+
 """
        
 if __name__ == '__main__':
     args = sys.argv
     if args[1] == "getKeys":
-        if len(args) ==2:
+        if len(args) ==3:
             privateKey,publicKey = getKeys()
-            writeKeysToFile(privateKey,publicKey)
-        elif len(args)==3:
+            writeKeysToFile(privateKey,publicKey, args[2])
+        elif len(args)==4:
             try:
-                privateKey,publicKey = getKeys(args[2])
-                writeKeysToFile(privateKey,publicKey)
+                privateKey,publicKey = getKeys(args[3])
+                writeKeysToFile(privateKey,publicKey, args[2])
             except ValueError as e:
                 usage()
                 quit()
     elif args[1] == "encrypt":
-        if len(args)!=4:
-            usage()
-        else:
+        if len(args)==4:
             try:
                 with open(args[3],"r") as f:
                     n = int(f.readline())
@@ -135,10 +145,24 @@ if __name__ == '__main__':
                         f.write(str(encrypt(args[2],recieverPublicKey)))
             except IOError as e:
                 usage()
-    elif args[1] == "decrypt":
-        if len(args)!=4:
-            usage()
+        elif len(args)==6:
+            try:
+                with open(args[3],"r") as f:
+                    n = int(f.readline())
+                    e = int(f.readline())
+                with open(args[5],"r") as f:
+                    n = int(f.readline())
+                    d = int(f.readline())
+                recieverPublicKey = (n,e)
+                yourPrivateKey = (n,d)
+                with open("encryptedMessage.txt","w") as f:
+                    f.write(str(encrypt(args[2],recieverPublicKey, yourPrivateKey)))
+            except IOError as e:
+                usage()
         else:
+            usage()
+    elif args[1] == "decrypt":
+        if len(args)==4:
             try:
                 with open(args[3],"r") as f:
                     n = int(f.readline())
@@ -149,6 +173,23 @@ if __name__ == '__main__':
                     print decrypt(message,privateKey)
             except IOError as e:
                 usage()
+        elif len(args)==6:
+            try:
+                with open(args[3],"r") as f:
+                    n = int(f.readline())
+                    d = int(f.readline())
+                with open(args[5],"r") as f:
+                    n = int(f.readline())
+                    e = int(f.readline())
+                senderPublicKey = (n,e)
+                yourPrivateKey = (n,d)
+                with open(args[2],"r") as f:
+                        message = f.readline()
+                print decrypt(message, yourPrivateKey, senderPublicKey)
+            except IOError as e:
+                usage()
+        else:
+            usage()
     else:
         usage()
                     
